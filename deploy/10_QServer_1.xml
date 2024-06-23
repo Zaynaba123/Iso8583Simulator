@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<server class="org.jpos.q2.iso.QServer" logger="Q2" name="server_1">
+    <attr name="port" type="java.lang.Integer">10001</attr>
+    <attr name="maxSessions" type="java.lang.Integer">100</attr>
+    <channel class="org.jpos.iso.channel.NACChannel"
+             logger="Q2" packager="org.jpos.iso.packager.GenericPackager" header="6000000000">
+        <property name="packager-config" value="cfg/packager/iso87ascii-binary-bitmap.xml" />
+    </channel>
+
+    <request-listener class="com.example.isoserveurservice.iso.SwitchRequestListener" logger="Q2"/>
+    <!--configure in and out queue-->
+    <in>Server_1_NETWORK_IN</in>
+    <out>Server_1_NETWORK_OUT</out>
+
+</server>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CASES>
+  <case name="case1">
+    <request>
+      <field id="2" NAME="FIELD2" WORDING="CARD NUMBER" value="123456789876511" />
+      <field id="3" NAME="FIELD3" WORDING="PROCESSING CODE" value="111111" />
+      <field id="11" NAME="FIELD11" WORDING="CODE" value="000122" />
+    </request>
+    <response>
+      <field id="39" NAME="FIELD39" value="05" />
+    </response>
+  </case>
+  <case name="case2">
+    <request>
+      <field id="2" NAME="FIELD2" WORDING="CARD NUMBER" value="223456789876511" />
+      <field id="3" NAME="FIELD3" WORDING="PROCESSING CODE" value="111000" />
+    </request>
+    <response>
+      <field id="39" NAME="FIELD39" value="12" />
+    </response>
+  </case>
+  <case name="case3">
+    <request>
+      <field id="2" NAME="FIELD2" WORDING="CARD NUMBER" value="223456789123456" />
+      <field id="3" NAME="FIELD3" WORDING="PROCESSING CODE" value="000000" />
+    </request>
+    <response>
+      <field id="39" NAME="FIELD39" value="14" />
+    </response>
+  </case>
+  <case name="case4">
+    <request>
+      <field id="2" NAME="FIELD2" WORDING="CARD NUMBER" value="123666547899999" />
+      <field id="3" NAME="FIELD3" WORDING="PROCESSING CODE" value="111222" />
+    </request>
+    <response>
+      <field id="39" NAME="FIELD39" value="13" />
+    </response>
+  </case>
+  <case name="case5">
+    <request>
+      <field id="2" NAME="FIELD2" WORDING="CARD NUMBER" value="111122223333444" />
+    </request>
+    <response>
+      <field id="39" NAME="FIELD39" value="05" />
+    </response>
+  </case>
+</CASES>
