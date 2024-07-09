@@ -39,8 +39,9 @@ public class SwitchRequestListener implements ISORequestListener, Configurable {
         routeTable.put("8001", "server_1");
         routeTable.put("8002", "server_2");
 
-        String filePath = configuration.get("CardCfg/card.xml");
-        requestResponseProvider = new RequestResponseProvider("CardCfg/card.xml");
+        String caseFilePath = configuration.get("CardCfg/card.xml");
+        String ecodeFilePath = configuration.get("CardCfg/FieldEcodes.xml");
+        requestResponseProvider = new RequestResponseProvider(caseFilePath, ecodeFilePath);
     }
 
     @Override
@@ -50,8 +51,18 @@ public class SwitchRequestListener implements ISORequestListener, Configurable {
                 mux = QMUX.getMUX("server_1-mux");
             }
 
+            // Log the MTI of the received message
+            String mti = isoMsg.getMTI();
+            log.info("Received MTI: {}", mti);
+
+            // Check if the MTI is a request type (e.g., 0200)
+            if (!"0100".equals(mti)) {
+                log.error("Received message is not a request. MTI: {}", mti);
+                return false;
+            }
+
             Map<String, String> requestFields = new HashMap<>();
-            for (int i = 0; i <= 128; i++) {
+            for (int i = 0; i <= 127; i++) { // Updated to handle fields from 0 to 127
                 if (isoMsg.hasField(i)) {
                     requestFields.put(String.valueOf(i), isoMsg.getString(i));
                 }
@@ -73,6 +84,16 @@ public class SwitchRequestListener implements ISORequestListener, Configurable {
                 log.info("No matching response found. Setting default response code 00.");
                 reply.set(39, "00"); // Default response code
             }
+
+            // Apply the logic to filter fields based on ecode
+            Map<Integer, Integer> fieldEcodes = requestResponseProvider.getFieldEcodes();
+            for (int i = 0; i <= 127; i++) { // Updated to handle fields from 0 to 127
+                if (reply.hasField(i) && fieldEcodes.getOrDefault(i, 0) == 0) {
+                    reply.unset(i);
+                }
+            }
+
+
 
             reply.set(60, "server");
 

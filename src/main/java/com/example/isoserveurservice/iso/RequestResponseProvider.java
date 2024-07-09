@@ -7,17 +7,17 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RequestResponseProvider {
     private List<RequestResponseCase> cases;
+    private Map<Integer, Integer> fieldEcodes;
 
-    public RequestResponseProvider(String filePath) {
+    public RequestResponseProvider(String caseFilePath, String ecodeFilePath) {
         cases = new ArrayList<>();
+        fieldEcodes = new HashMap<>();
         loadCases("CardCfg/card.xml");
+        loadFieldEcodes("CardCfg/FieldEcodes.xml");
     }
 
     private void loadCases(String filePath) {
@@ -49,6 +49,39 @@ public class RequestResponseProvider {
         }
     }
 
+
+    private void loadFieldEcodes(String filePath) {
+        try {
+            File inputFile = new File("CardCfg/FieldEcodes.xml");
+            SAXBuilder saxBuilder = new SAXBuilder();
+            Document document = saxBuilder.build(inputFile);
+            Element rootElement = document.getRootElement();
+
+            for (Element fieldElement : rootElement.getChildren("field")) {
+                String idStr = fieldElement.getAttributeValue("id");
+                String ecodeStr = fieldElement.getAttributeValue("ecode");
+
+                if (idStr != null && ecodeStr != null && !idStr.isEmpty() && !ecodeStr.isEmpty()) {
+                    try {
+                        int id = Integer.parseInt(idStr);
+                        int ecode = Integer.parseInt(ecodeStr);
+                        fieldEcodes.put(id, ecode);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid number format in FieldEcodes.xml: " + e.getMessage());
+                    }
+                } else {
+                    System.err.println("Missing or empty 'id' or 'ecode' attribute in FieldEcodes.xml");
+                }
+            }
+        } catch (JDOMException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<RequestResponseCase> getCases() {
+        return cases;
+    }
+
     public Map<String, String> getResponseForRequest(Map<String, String> requestFields) {
         for (RequestResponseCase rc : cases) {
             boolean allFieldsMatch = true;
@@ -63,5 +96,9 @@ public class RequestResponseProvider {
             }
         }
         return null;
+    }
+
+    public Map<Integer, Integer> getFieldEcodes() {
+        return fieldEcodes;
     }
 }
